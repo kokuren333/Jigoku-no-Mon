@@ -57,14 +57,14 @@
         });
       </script></head><body>
       <header><h1>Jigoku-no-Mon</h1><p>公開投稿の観測値を確認する読み取り専用ダッシュボード</p>
-      <p>表示モード: <b>tweet IDリンク</b>　<a href="embeds.html?search=&sort=observed_behavior_score&direction=desc">X公式埋め込み</a></p>
+      <p>表示モード: <b>tweet IDリンク</b>　<a href="/Jigoku-no-Mon/embeds.html?search=&sort=observed_behavior_score&direction=desc">X公式埋め込み</a></p>
       <small>本文はWebUIに保存・転載せず、X公式ウィジェットまたはリンクから表示します。</small></header>
-      <form class="controls" method="get" action="index.html">
+      <form class="controls" method="get" action="/Jigoku-no-Mon/index.html">
         <label>アカウント検索 <input name="search" value="" placeholder="screen name"></label>
         <label>並べ替え <select name="sort"><option value="observed_behavior_score" selected>ObservedBehaviorScore</option><option value="offensive_mean" >offensive_mean</option><option value="offensive_p95" >offensive_p95</option><option value="offensive_max" >offensive_max</option><option value="high_score_rate" >high_score_rate</option><option value="n_tweets" >n_tweets</option></select></label>
         <label>順序 <select name="direction"><option value="desc" selected>降順</option><option value="asc" >昇順</option></select></label>
         <input type="hidden" name="mode" value="ids">
-        <button type="submit">適用</button> <a href="index.html?">リセット</a>
+        <button type="submit">適用</button> <a href="/Jigoku-no-Mon/index.html?">リセット</a>
       </form>
       <p><small>47 アカウント表示 / 並べ替え: ObservedBehaviorScore (降順)</small></p>
       <section id="account-list"><article class="card account-card">
