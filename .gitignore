@@ -1,0 +1,22 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+secrets/
+data/*.sqlite3
+data/cache/
+data/models/
+data/logs/
+dist/
+*.egg-info/
+
+# Local research implementation; never include these in the public Pages repo.
+/src/
+/tests/
+/tools/
+/pyproject.toml
+/uv.lock
+/AGENTS.md
+/DATA_PUBLICATION.md
+/.env.example
