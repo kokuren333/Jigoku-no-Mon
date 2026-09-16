@@ -112,3 +112,18 @@ collection account, retrieval time, mode, query, and any restriction or error
 must be recorded as observation conditions. A future robustness check should
 compare independent, policy-compliant observation contexts where authorized;
 until then this is a known limitation of the dataset.
+
+### Local implementation
+
+The reproducible sampler is available locally as:
+
+```bash
+uv run jigoku seed generate --per-topic 1 --random-seed 20260917
+```
+
+It searches one bounded date/query stratum per configured topic, removes native
+reposts, samples low/middle/high exposure strata with a deterministic random
+seed, and stores the selected tweet ID and selection metadata in the local
+`seed_candidates` table. Search results are not a random sample of X; the
+command is a documented, bounded approximation. The resulting IDs can then be
+passed one at a time to the unchanged `protocol seed` command.
