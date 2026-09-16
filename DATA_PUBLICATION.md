@@ -99,3 +99,16 @@ search conditions.
 
 This section is an additive research record. It does not replace the existing
 scoring or collection descriptions above.
+
+### Additional observation-account bias
+
+The collection currently uses the logged-in account `wangoroge333`. X may
+personalize search results and visible ranking based on account state, region,
+language, session history, eligibility, or temporary display restrictions.
+The account can also affect which public relations are visible to the
+collector. Therefore, results obtained through this account must not be
+described as the distribution of all X users or all Japanese X posts. The
+collection account, retrieval time, mode, query, and any restriction or error
+must be recorded as observation conditions. A future robustness check should
+compare independent, policy-compliant observation contexts where authorized;
+until then this is a known limitation of the dataset.
