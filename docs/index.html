@@ -20,12 +20,6 @@
       .frequency-chart{height:170px;display:flex;align-items:end;gap:2px;border-bottom:1px solid #9ca3af;padding:8px 4px 0;overflow:hidden}
       .freq-bin{height:162px;flex:1;display:flex;align-items:end;min-width:2px} .freq-bar{display:block;width:100%;min-height:0;background:#2563eb;border-radius:2px 2px 0 0}
       .frequency-axis{display:flex;justify-content:space-between;font-size:.75rem;color:#53606b;margin:5px 0 8px} .frequency-empty{height:170px;display:grid;place-items:center;color:#53606b;background:#f8fafc;border-radius:8px}
-      .fx-inline-trigger{display:inline-block;margin:10px 0 4px;padding:4px 0;cursor:pointer}
-      .fx-inline-trigger.is-loading{color:#53606b;text-decoration:none;cursor:wait}
-      .fx-frame-overlay{position:fixed;inset:0;background:rgba(15,23,42,.68);z-index:1000;display:grid;place-items:center;padding:20px}
-      .fx-frame-panel{width:min(760px,96vw);height:min(820px,92vh);background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden}
-      .fx-frame-toolbar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #e5e7eb}
-      .fx-frame{border:0;width:100%;flex:1;background:#f8fafc}
       li{margin:8px 0;line-height:1.5} a{color:#075985} small{color:#53606b}
       @media(max-width:1100px){.card{display:block;width:auto;margin-right:0}} @media(max-width:700px){body{width:calc(100% - 28px);padding:14px 0} .card-body{display:block} .histogram{border-left:0;border-top:1px solid #e5e7eb;margin-top:16px;padding:16px 0 0}}
       .mermaid{background:#fff;border:1px solid #dfe3e8;border-radius:8px;padding:16px;overflow:auto;text-align:center}
@@ -41,49 +35,8 @@
             window.setTimeout(function () { renderXPosts(retries - 1); }, 250);
           }
         }
-        function fallbackToFxTwitter() {
-          document.querySelectorAll("blockquote.twitter-tweet").forEach(function (blockquote) {
-            if (blockquote.querySelector("iframe") || blockquote.classList.contains("twitter-tweet-rendered")) return;
-            var anchor = blockquote.querySelector("a[href]");
-            if (!anchor || (!anchor.href.includes("x.com/") && !anchor.href.includes("twitter.com/"))) return;
-            var fallback = document.createElement("a");
-            fallback.href = anchor.href.replace("https://x.com/", "https://fxtwitter.com/").replace("https://twitter.com/", "https://fxtwitter.com/");
-            fallback.className = "fx-inline-trigger";
-            fallback.dataset.fxFrameUrl = fallback.href;
-            fallback.textContent = "FxTwitterで元投稿をページ内表示";
-            blockquote.replaceWith(fallback);
-          });
-          attachFxInline();
-        }
-        function attachFxInline() {
-          document.querySelectorAll(".fx-inline-trigger").forEach(function (trigger) {
-            if (trigger.dataset.fxBound === "1") return;
-            trigger.dataset.fxBound = "1";
-            trigger.addEventListener("click", function (event) {
-              event.preventDefault();
-              trigger.classList.add("is-loading");
-              var overlay = document.createElement("div");
-              overlay.className = "fx-frame-overlay";
-              overlay.setAttribute("role", "dialog");
-              overlay.setAttribute("aria-label", "元投稿のページ内表示");
-              var panel = document.createElement("div"); panel.className = "fx-frame-panel";
-              var toolbar = document.createElement("div"); toolbar.className = "fx-frame-toolbar";
-              var label = document.createElement("strong"); label.textContent = "FxTwitter 元投稿";
-              var close = document.createElement("button"); close.type = "button"; close.textContent = "閉じる";
-              var frame = document.createElement("iframe"); frame.className = "fx-frame"; frame.src = trigger.dataset.fxFrameUrl;
-              frame.title = "FxTwitterの元投稿"; frame.loading = "lazy";
-              close.addEventListener("click", function () { overlay.remove(); trigger.classList.remove("is-loading"); });
-              overlay.addEventListener("click", function (event) { if (event.target === overlay) close.click(); });
-              toolbar.appendChild(label); toolbar.appendChild(close); panel.appendChild(toolbar); panel.appendChild(frame); overlay.appendChild(panel);
-              document.body.appendChild(overlay);
-            });
-          });
-        }
         document.addEventListener("DOMContentLoaded", function () {
           renderXPosts(40);
-          // X's widget script is asynchronous; give it time before fallback.
-          window.setTimeout(fallbackToFxTwitter, 20000);
-          attachFxInline();
           var showMore = document.getElementById("show-more-accounts");
           if (showMore) {
             showMore.addEventListener("click", function () {
@@ -96,8 +49,6 @@
               if (remaining === 0) { showMore.remove(); }
               else { showMore.textContent = "続きを見る（残り" + remaining + "件）"; }
               if (window.twttr && window.twttr.widgets) { window.twttr.widgets.load(); }
-              window.setTimeout(fallbackToFxTwitter, 20000);
-              attachFxInline();
             });
           }
           if (window.mermaid) {
