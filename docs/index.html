@@ -82,7 +82,7 @@
         document.addEventListener("DOMContentLoaded", function () {
           renderXPosts(40);
           // X's widget script is asynchronous; give it time before fallback.
-          window.setTimeout(fallbackToFxTwitter, 5000);
+          window.setTimeout(fallbackToFxTwitter, 20000);
           attachFxInline();
           var showMore = document.getElementById("show-more-accounts");
           if (showMore) {
@@ -96,7 +96,7 @@
               if (remaining === 0) { showMore.remove(); }
               else { showMore.textContent = "続きを見る（残り" + remaining + "件）"; }
               if (window.twttr && window.twttr.widgets) { window.twttr.widgets.load(); }
-              window.setTimeout(fallbackToFxTwitter, 5000);
+              window.setTimeout(fallbackToFxTwitter, 20000);
               attachFxInline();
             });
           }
