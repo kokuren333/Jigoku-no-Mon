@@ -54,7 +54,7 @@
             cards.forEach(function (card) {
               card.classList.toggle("is-hidden", needle !== "" && !card.dataset.screen.toLowerCase().includes(needle));
             });
-            cards.sort(function (a, b) { return direction * ((parseFloat(a.dataset[key]) || 0) - (parseFloat(b.dataset[key]) || 0)); });
+            cards.sort(function (a, b) { return direction * ((parseFloat(a.getAttribute("data-" + key)) || 0) - (parseFloat(b.getAttribute("data-" + key)) || 0)); });
             cards.forEach(function (card) { accountList.appendChild(card); });
             var count = cards.filter(function (card) { return !card.classList.contains("is-hidden"); }).length;
             var summary = document.querySelector("#account-summary");
