@@ -38,16 +38,16 @@
         document.addEventListener("DOMContentLoaded", function () {
           // GitHub Pages is static: apply search and sorting in the browser.
           var accountList = document.getElementById("account-list");
-          var templates = Array.from(document.querySelectorAll(".account-template"));
-          templates.forEach(function (template) { accountList.appendChild(template.content.cloneNode(true)); template.remove(); });
-          var showMore = document.getElementById("show-more-accounts");
-          if (showMore) showMore.remove();
           var form = document.querySelector(".controls");
           var searchInput = form && form.querySelector('[name="search"]');
           var sortInput = form && form.querySelector('[name="sort"]');
           var directionInput = form && form.querySelector('[name="direction"]');
-          function applyAccountView() {
+          function materializeAll() {
+            Array.from(document.querySelectorAll(".account-template")).forEach(function (template) { accountList.appendChild(template.content.cloneNode(true)); template.remove(); });
+          }
+          function applyAccountView(forceAll) {
             var needle = (searchInput ? searchInput.value : "").trim().replace(/^@/, "").toLowerCase();
+            if (forceAll || needle !== "") materializeAll();
             var key = sortInput ? sortInput.value.replace(/_/g, "-") : "observed-behavior-score";
             var direction = directionInput && directionInput.value === "asc" ? 1 : -1;
             var cards = Array.from(accountList.querySelectorAll(".account-card"));
@@ -61,10 +61,10 @@
             if (summary) summary.textContent = count + " アカウント表示 / 検索: " + (needle || "なし");
           }
           if (form) form.addEventListener("submit", function (event) { event.preventDefault(); applyAccountView(); });
-          if (searchInput) searchInput.addEventListener("input", applyAccountView);
-          if (sortInput) sortInput.addEventListener("change", applyAccountView);
-          if (directionInput) directionInput.addEventListener("change", applyAccountView);
-          applyAccountView();
+          if (searchInput) searchInput.addEventListener("input", function () { applyAccountView(searchInput.value.trim() !== ""); });
+          if (sortInput) sortInput.addEventListener("change", function () { applyAccountView(true); });
+          if (directionInput) directionInput.addEventListener("change", function () { applyAccountView(true); });
+          applyAccountView(false);
           renderXPosts(40);
           var showMore = document.getElementById("show-more-accounts");
           if (showMore) {
@@ -77,6 +77,7 @@
               var remaining = document.querySelectorAll(".account-template").length;
               if (remaining === 0) { showMore.remove(); }
               else { showMore.textContent = "続きを見る（残り" + remaining + "件）"; }
+              applyAccountView(false);
               if (window.twttr && window.twttr.widgets) { window.twttr.widgets.load(); }
             });
           }
@@ -1923,4 +1924,8 @@
       <ol><li><b>初期段階:</b> 最初のseed投稿 <code>2099783355248341399</code> を作為的に選定し、単一seed探索を開始。単一seedから得られる規模を測る試行だった。</li><li><b>単一seed試行:</b> 約70前後のアカウント到達を確認。ただし、単一会話に依存するため、母集団の代表性はないと判断。</li><li><b>v2切替:</b> 既存checkpointを引き継ぎ、候補投稿から次の探索起点を追加する方式へ移行。途中切替であり、既存データは破棄していない。</li><li><b>seed探索プロトコル確定:</b> 先行研究の話題層を参照し、ランダムな期間・時間窓、話題層、反応規模、比較対象を組み合わせる手順を確定。</li><li><b>現スナップショット:</b> v2 checkpointは <code>explore-v2</code>、処理済み関係投稿62件、待機関係投稿127件、完了アカウント55件。DBはアカウント79、保存投稿4,766件、account score55件、confidence=high 42件。</li><li><b>停止判断:</b> 同一seedでv2を複数サイクル実行したが新規アカウント0件が続いたため、同一seedの供給枯渇と判断。新seed投入待ちで停止している。</li></ol>
       <p>この記録は、後からseed台帳とcheckpointを照合できるようにしたものです。既存の方法説明・スコア式は変更せず、seed選定に関する追加記録として扱います。</p>
       <p>ローカル実装: <code>uv run jigoku seed generate --per-topic 1 --random-seed 20260917</code>。生成されたseed候補はローカル台帳に保存し、各tweet IDを既存のv2 protocolへ個別に渡します。</p>
+      <h3>追加記録: 実装・研究設計の変更履歴（時系列）</h3>
+      <p>以下は、実際に確認できる実装状態と作業記録を分けて記載した変更履歴です。後から追加した説明を、当初から存在した仕様として扱わないための記録です。</p>
+      <ol><li><b>単一seedの初期試行:</b> <code>2099783355248341399</code> を作為的に選び、1投稿から周辺関係を取得した。これは探索器の到達規模を測る試行であり、無作為抽出でも代表標本でもない。</li><li><b>初期取得・分析:</b> アカウントの公開プロフィールと投稿を保存し、最新投稿を最大100件取得して投稿スコア・account score・evidenceを計算した。この段階では単一seedのネットワークに強く依存していた。</li><li><b>ブラウザ取得の導入:</b> プロフィールの実投稿をブラウザ経由で収集し、単純リポストはaccount scoreの対象から除外、引用リポストは残す方針にした。取得記録と分析対象を分けた。</li><li><b>探索v2への途中切替:</b> 既存checkpointを破棄せず、処理済み起点・待機列・深度を引き継ぎ、候補投稿から次の起点を追加する方式へ切り替えた。したがって、v2以前とv2以後の結果は同一条件の実験ではない。</li><li><b>単一seed結果の確認:</b> 単一seedから約70前後のアカウントに到達したが、これは会話固有の到達数であり、X全体の推定には使えない。v2再実行では追加7アカウントを確認した後、新規0件が複数サイクル続いた。</li><li><b>seed選定の再設計:</b> 単一seedの作為性と供給枯渇を受け、話題層、ランダムな期間窓、検索語、低・中・高露出層、非炎上比較対象、採用理由を事前記録するseed探索プロトコルを追加した。</li><li><b>実装上の制約:</b> X検索には完全なランダム順やインプレッション順指定がないため、実装は完全無作為抽出ではなく、検索結果内の再現可能な層化抽出である。またログイン観測アカウント <code>wangoroge333</code> によるパーソナライズ・表示制限の影響が残る。</li><li><b>公開範囲の分離:</b> ローカルDB・取得処理・cookieは公開せず、公開PagesにはIDリンク版とX公式ウィジェット版、集計式、限界、変更履歴のみを配置した。</li></ol>
+      <p><b>現時点の解釈:</b> seed生成プロトコルは、探索範囲を広げるためのサンプリング枠としては妥当だが、代表性・因果性・人格判定を保証しない。seed別の到達数、重複率、取得不能率、話題層別の件数を併記して評価する。</p>
       </section></body></html>

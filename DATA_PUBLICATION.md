@@ -127,3 +127,41 @@ seed, and stores the selected tweet ID and selection metadata in the local
 `seed_candidates` table. Search results are not a random sample of X; the
 command is a documented, bounded approximation. The resulting IDs can then be
 passed one at a time to the unchanged `protocol seed` command.
+
+### Chronological research and implementation record
+
+The following record is additive. Earlier descriptions remain unchanged; this
+section clarifies when each design decision was introduced.
+
+1. **Initial single-seed trial.** Tweet `2099783355248341399` was deliberately
+   selected to measure the reachable size of one public conversation. It was
+   not random and was never a representative sample.
+2. **Initial collection and scoring.** Public profile data and up to 100 recent
+   posts were stored locally, then post scores, account aggregates, and
+   evidence were computed. The result was necessarily centered on one seed
+   network.
+3. **Browser collection phase.** Profile timelines were collected through the
+   browser path for actual posts; native reposts were excluded from account
+   scoring while quote posts remained observable. Collection records and
+   analysis eligibility were kept separate.
+4. **Mid-project explore-v2 transition.** Existing checkpoints were preserved.
+   The v2 path carried forward processed roots, queued roots, and depth, and
+   added selected posts from candidate accounts as later roots. Pre-v2 and v2
+   output therefore must not be treated as one identical experiment.
+5. **Single-seed result.** The initial seed reached roughly 70 accounts. A
+   later v2 continuation added 7 accounts, then repeated cycles produced no
+   new accounts. This is evidence of that seed network's saturation, not proof
+   that X contains no further candidates.
+6. **Seed protocol redesign.** The observed single-seed bias and saturation led
+   to the topic/time-window/exposure-stratified protocol. The selection reason,
+   query, window, random seed, and exposure field are now persisted in
+   `seed_candidates`.
+7. **Known observation limitation.** The logged-in observation account is
+   `wangoroge333`; personalization, account state, language/region, and
+   temporary visibility restrictions may affect search and relationships.
+8. **Public separation.** The public site contains only derived explanations,
+   tweet-ID links, and official X widgets. Acquisition code, cookies, local
+   SQLite, checkpoints, and raw post storage remain local.
+
+This history distinguishes measured facts from interpretation. It does not
+claim that the current seed frame is representative of Japanese X as a whole.
